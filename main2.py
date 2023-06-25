@@ -20,6 +20,7 @@ TARGET_ROOT = '/Users/xumingfang/Work/Temp/BBB'
 # TARGET_ROOT = '/Volumes/Work'
 # IGNORE_DIR_NAMES = ['/temp', '/tmp', '\\temp', '\\tmp']
 # ONE_SECOND = timedelta(seconds=1)
+LOG_DIR = '/Users/xumingfang/Work/_log/SmartCopy'
 
 def _check_dir_need_copy(dir, dir1):
     # print(f'dir.lower():{dir.lower()}')
@@ -119,13 +120,14 @@ if __name__ == '__main__':
     print(f"********************")
 
     arguments = sys.argv[1:]
-    helper.init_logging(log_dir='/Users/xumingfang/Work/_log/SmartCopy')
-
     start_time = time.perf_counter()
 
     if len(arguments) >= 2:
         SOURCE_ROOT = arguments[0]
         TARGET_ROOT = arguments[1]
+    if len(arguments) >= 3:
+        LOG_DIR = arguments[2]
+    helper.init_logging(log_dir=LOG_DIR)
     logging.info(f'SOURCE_ROOT: {SOURCE_ROOT}')
     logging.info(f'TARGET_ROOT: {TARGET_ROOT}')
     asyncio.run(main=main_async())
