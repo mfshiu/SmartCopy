@@ -1,3 +1,5 @@
+# encoding:utf-8 
+
 import asyncio
 from datetime import datetime as dt
 from datetime import timedelta
@@ -6,15 +8,15 @@ import shutil
 import sys
 import time
 
-TARGET_ROOT = '/Volumes/Home/WorkA/悠悅光/Material'
+# TARGET_ROOT = '/Volumes/Home/WorkA/悠悅光/Material'
 # TARGET_ROOT = '/Users/xumingfang/Work/Temp'
-# SOURCE_ROOT = '/Users/xumingfang/Work/新莊IOT'
+TARGET_ROOT = '\\\\GIGOO-NAS\\Home\\WorkA\\_bak'
 # TARGET_ROOT = '/Users/xumingfang/Work/Temp'
 # SOURCE_ROOT = '/Users/xumingfang/Work/Gold'
 # TARGET_ROOT = '/Volumes/Work/Gold'
 # SOURCE_ROOT = '/Users/xumingfang/Work'
 # TARGET_ROOT = '/Volumes/Work'
-SOURCE_ROOT = '/Users/xumingfang/Work/悠悅光/Material'
+SOURCE_ROOT = 'D:\\Work\\_bak'
 # IGNORE_DIR_NAMES = ['/temp', '/tmp', '\\temp', '\\tmp']
 # ONE_SECOND = timedelta(seconds=1)
 
@@ -82,16 +84,16 @@ async def copy_dir(dir0, files):
                     print(f"ERROR: {path0}\n{str(ex)}")
 
 
-def copy_dir1(dir0, files):
-    print(f"{dir0}, {files}")
+# def copy_dir1(dir0, files):
+#     print(f"{dir0}, {files}")
 
-    dir1 = dir0.replace(SOURCE_ROOT, TARGET_ROOT)
-    if not os.path.exists(dir1):
-        os.mkdir(dir1)
-    for file in files:
-        path0 = os.path.join(dir0, file)
-        # path1 = os.path.join(dir1, file)
-        shutil.copy(path0, dir1)
+#     dir1 = dir0.replace(SOURCE_ROOT, TARGET_ROOT)
+#     if not os.path.exists(dir1):
+#         os.mkdir(dir1)
+#     for file in files:
+#         path0 = os.path.join(dir0, file)
+#         # path1 = os.path.join(dir1, file)
+#         shutil.copy(path0, dir1)
 
 
 async def main_async():
@@ -103,16 +105,16 @@ async def main_async():
     await asyncio.gather(*copy_tasks)
 
 
-def main_sync():
-    for dir, _, files in os.walk(SOURCE_ROOT):
-        copy_dir1(dir, files)
+# def main_sync():
+#     for dir, _, files in os.walk(SOURCE_ROOT):
+#         copy_dir1(dir, files)
 
 
 # SOURCE_ROOT = /Users/xumingfang/Work
 # TARGET_ROOT = /Volumes/Home/WorkA/
 if __name__ == '__main__':
     print(f"\n********************")
-    print(f'SmartCopy Start at {dt.now()}')
+    print(f'SmartCopy starts at {dt.now()}')
     print(f"********************")
 
     arguments = sys.argv[1:]
@@ -129,4 +131,5 @@ if __name__ == '__main__':
 
     stop_time = time.perf_counter()
     elapsed_time = stop_time - start_time
+    print(f'SmartCopy ends at {dt.now()}')
     print(f"Elapsed time: {elapsed_time} seconds")
