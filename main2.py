@@ -3,22 +3,24 @@
 import asyncio
 from datetime import datetime as dt
 from datetime import timedelta
+import logging
 import os
 import shutil
 import sys
 import time
 
-# TARGET_ROOT = '/Volumes/Home/WorkA/悠悅光/Material'
+TARGET_ROOT = '/Volumes/Home/WorkA/悠悅光/Material'
 # TARGET_ROOT = '/Users/xumingfang/Work/Temp'
-TARGET_ROOT = '\\\\GIGOO-NAS\\Home\\WorkA\\_bak'
+# SOURCE_ROOT = '/Users/xumingfang/Work/新莊IOT'
 # TARGET_ROOT = '/Users/xumingfang/Work/Temp'
 # SOURCE_ROOT = '/Users/xumingfang/Work/Gold'
 # TARGET_ROOT = '/Volumes/Work/Gold'
 # SOURCE_ROOT = '/Users/xumingfang/Work'
 # TARGET_ROOT = '/Volumes/Work'
-SOURCE_ROOT = 'D:\\Work\\_bak'
+SOURCE_ROOT = '/Users/xumingfang/Work/悠悅光/Material'
 # IGNORE_DIR_NAMES = ['/temp', '/tmp', '\\temp', '\\tmp']
 # ONE_SECOND = timedelta(seconds=1)
+LOG_DIR = '/Users/xumingfang/Work/_log/SmartCopy'
 
 def _check_dir_need_copy(dir, dir1):
     # print(f'dir.lower():{dir.lower()}')
@@ -75,13 +77,13 @@ async def copy_dir(dir0, files):
             path1 = os.path.join(dir1, file)
             if symbol := _check_file_need_copy(path0, path1):
                 # i += 1
-                print(f"{symbol} {_shorten_path(path1, 120)}")
+                logging.debug(f"{symbol} {_shorten_path(path1, 120)}")
                 # print(f"[{dir_base}]-{i} {_shorten_path(path1, 100)}")
                 # print(f"[{dir_base}]-{i} C: {_shorten_path(path0, 50)} -> {_shorten_path(path1, 50)}")
                 try:
                     shutil.copy(path0, dir1)
                 except Exception as ex:
-                    print(f"ERROR: {path0}\n{str(ex)}")
+                    logging.exception(f"ERROR: {path0}\n{str(ex)}")
 
 
 # def copy_dir1(dir0, files):
@@ -118,14 +120,16 @@ if __name__ == '__main__':
     print(f"********************")
 
     arguments = sys.argv[1:]
-
     start_time = time.perf_counter()
 
     if len(arguments) >= 2:
         SOURCE_ROOT = arguments[0]
         TARGET_ROOT = arguments[1]
-    print(f'SOURCE_ROOT: {SOURCE_ROOT}')
-    print(f'TARGET_ROOT: {TARGET_ROOT}')
+    if len(arguments) >= 3:
+        LOG_DIR = arguments[2]
+    helper.init_logging(log_dir=LOG_DIR)
+    logging.info(f'SOURCE_ROOT: {SOURCE_ROOT}')
+    logging.info(f'TARGET_ROOT: {TARGET_ROOT}')
     asyncio.run(main=main_async())
     # main_sync()
 
