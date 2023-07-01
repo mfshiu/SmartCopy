@@ -9,18 +9,8 @@ import shutil
 import sys
 import time
 
-TARGET_ROOT = '/Volumes/Home/WorkA/悠悅光/Material'
-# TARGET_ROOT = '/Users/xumingfang/Work/Temp'
-# SOURCE_ROOT = '/Users/xumingfang/Work/新莊IOT'
-# TARGET_ROOT = '/Users/xumingfang/Work/Temp'
-# SOURCE_ROOT = '/Users/xumingfang/Work/Gold'
-# TARGET_ROOT = '/Volumes/Work/Gold'
-# SOURCE_ROOT = '/Users/xumingfang/Work'
-# TARGET_ROOT = '/Volumes/Work'
-SOURCE_ROOT = '/Users/xumingfang/Work/悠悅光/Material'
-# IGNORE_DIR_NAMES = ['/temp', '/tmp', '\\temp', '\\tmp']
-# ONE_SECOND = timedelta(seconds=1)
-LOG_DIR = '/Users/xumingfang/Work/_log/SmartCopy'
+from config import LOG_DIR, SOURCE_ROOT, TARGET_ROOT
+import helper 
 
 def _check_dir_need_copy(dir, dir1):
     # print(f'dir.lower():{dir.lower()}')
