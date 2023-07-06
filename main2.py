@@ -12,6 +12,7 @@ import time
 from config import LOG_DIR, SOURCE_ROOT, TARGET_ROOT
 import helper 
 
+
 def _check_dir_need_copy(dir, dir1):
     # print(f'dir.lower():{dir.lower()}')
     # dd = dir.lower()
@@ -67,13 +68,13 @@ async def copy_dir(dir0, files):
             path1 = os.path.join(dir1, file)
             if symbol := _check_file_need_copy(path0, path1):
                 # i += 1
-                logging.debug(f"{symbol} {_shorten_path(path1, 120)}")
+                logger.debug(f"{symbol} {_shorten_path(path1, 120)}")
                 # print(f"[{dir_base}]-{i} {_shorten_path(path1, 100)}")
                 # print(f"[{dir_base}]-{i} C: {_shorten_path(path0, 50)} -> {_shorten_path(path1, 50)}")
                 try:
                     shutil.copy(path0, dir1)
                 except Exception as ex:
-                    logging.exception(f"ERROR: {ex.args[1]}")
+                    logger.exception(f"ERROR: {ex.args[1]}")
                     # logging.exception(f"ERROR: {path0}\n{str(ex)}")
 
 
@@ -106,9 +107,7 @@ async def main_async():
 # SOURCE_ROOT = /Users/xumingfang/Work
 # TARGET_ROOT = /Volumes/Home/WorkA/
 if __name__ == '__main__':
-    print(f"\n********************")
-    print(f'SmartCopy starts at {dt.now()}')
-    print(f"********************")
+    global logger
 
     arguments = sys.argv[1:]
     start_time = time.perf_counter()
@@ -118,13 +117,19 @@ if __name__ == '__main__':
         TARGET_ROOT = arguments[1]
     if len(arguments) >= 3:
         LOG_DIR = arguments[2]
-    helper.init_logging(log_dir=LOG_DIR)
-    logging.info(f'SOURCE_ROOT: {SOURCE_ROOT}')
-    logging.info(f'TARGET_ROOT: {TARGET_ROOT}')
+
+    logger = helper.init_logging(log_dir=LOG_DIR, log_level=logging.DEBUG)
+
+    logger.info(f"\n********************")
+    logger.info(f'SmartCopy starts at {dt.now()}')
+    logger.info(f"********************")
+    logger.info(f'SOURCE_ROOT: {SOURCE_ROOT}')
+    logger.info(f'TARGET_ROOT: {TARGET_ROOT}')
+
     asyncio.run(main=main_async())
     # main_sync()
 
     stop_time = time.perf_counter()
     elapsed_time = stop_time - start_time
-    print(f'SmartCopy ends at {dt.now()}')
-    print(f"Elapsed time: {elapsed_time} seconds")
+    logger.info(f'SmartCopy ends at {dt.now()}')
+    logger.info(f"Elapsed time: {elapsed_time} seconds")
