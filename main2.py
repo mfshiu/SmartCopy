@@ -74,7 +74,7 @@ async def copy_dir(dir0, files):
                 try:
                     shutil.copy(path0, dir1)
                 except Exception as ex:
-                    logger.exception(f"ERROR: {ex.args[1]}")
+                    logger.exception(f"ERROR: {ex.args[1].splitlines()[-1]}")
                     # logging.exception(f"ERROR: {path0}\n{str(ex)}")
 
 
