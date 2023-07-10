@@ -1,4 +1,5 @@
 # encoding:utf-8 
+# -*- coding: utf-8 -*-
 
 import asyncio
 from datetime import datetime as dt
@@ -14,7 +15,8 @@ import helper
 
 
 def _check_dir_need_copy(dir, dir1):
-    # print(f'dir.lower():{dir.lower()}')
+    print(f'dir.lower():{dir.lower()}')
+    print(f'dir1.lower():{dir1.lower()}')
     # dd = dir.lower()
     # if any(dd.endswith(x) for x in IGNORE_DIR_NAMES):
     #     return False
