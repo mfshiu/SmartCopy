@@ -6,8 +6,11 @@ from pathlib import Path
 
 
 def init_logging(log_dir, log_level):
+    # formatter = logging.Formatter(
+    #     '%(levelname)1.1s %(asctime)s L:%(lineno)03d %(funcName)15s) %(message)s',
+    #     datefmt='%Y-%m-%d %H:%M:%S')
     formatter = logging.Formatter(
-        '%(levelname)1.1s %(asctime)s L:%(lineno)03d %(funcName)15s) %(message)s',
+        '%(levelname)1.1s %(asctime)s %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S')
     
     Path(log_dir).mkdir(parents=True, exist_ok=True)

@@ -6,17 +6,25 @@ from datetime import datetime as dt
 from datetime import timedelta
 import logging
 import os
+import requests
 import shutil
 import sys
+import threading
 import time
+
+import urllib
 
 from config import LOG_DIR, SOURCE_ROOT, TARGET_ROOT
 import helper 
 
 
+_total_tasks = 0
+_task_number = 0
+
+
 def _check_dir_need_copy(dir, dir1):
-    print(f'dir.lower():{dir.lower()}')
-    print(f'dir1.lower():{dir1.lower()}')
+    # print(f'dir.lower():{dir.lower()}')
+    # print(f'dir1.lower():{dir1.lower()}')
     # dd = dir.lower()
     # if any(dd.endswith(x) for x in IGNORE_DIR_NAMES):
     #     return False
@@ -60,6 +68,10 @@ def _shorten_path(path, max_width):
 
 async def copy_dir(dir0, files):
     # print(f"{dir0}, {files}")
+    global _total_tasks, _task_number
+    _task_number += 1
+    dir_number = _task_number
+    file_number = 0
 
     dir1 = dir0.replace(SOURCE_ROOT, TARGET_ROOT)
     # dir_base = os.path.basename(os.path.normpath(dir0))
@@ -69,8 +81,8 @@ async def copy_dir(dir0, files):
             path0 = os.path.join(dir0, file)
             path1 = os.path.join(dir1, file)
             if symbol := _check_file_need_copy(path0, path1):
-                # i += 1
-                logger.debug(f"{symbol} {_shorten_path(path1, 120)}")
+                file_number += 1
+                logger.debug(f"{symbol} {dir_number}-{file_number}/{_total_tasks} {_shorten_path(path1, 120)}")
                 # print(f"[{dir_base}]-{i} {_shorten_path(path1, 100)}")
                 # print(f"[{dir_base}]-{i} C: {_shorten_path(path0, 50)} -> {_shorten_path(path1, 50)}")
                 try:
@@ -99,16 +111,29 @@ async def main_async():
     for dir, _, files in os.walk(SOURCE_ROOT):
         copy_tasks.append(copy_dir(dir, files))
 
+    global _total_tasks, _task_number
+    _total_tasks = len(copy_tasks)
+    _task_number = 0
+    logger.info(f"Total Tasks: {_total_tasks}")
+
     await asyncio.gather(*copy_tasks)
 
 
-# def main_sync():
-#     for dir, _, files in os.walk(SOURCE_ROOT):
-#         copy_dir1(dir, files)
+def _send_out_message(msg):
+    def send_to_mqtt(msg):
+        topic = "smartcopy"
+        msg = urllib.parse.quote(msg)
+        msg = msg.replace('/', '\\')
+        url = f"https://gigoo.co/mqtt/{topic}/{msg}"
+        print(f"url: {url}")
+        response = requests.get(url)
+        if response.status_code != 200:
+            logger.error(f"Request failed with status code {response.status_code}")
+    
+    thread1 = threading.Thread(target=send_to_mqtt, args=(msg,))
+    thread1.start()
 
 
-# SOURCE_ROOT = /Users/xumingfang/Work
-# TARGET_ROOT = /Volumes/Home/WorkA/
 if __name__ == '__main__':
     global logger
 
@@ -123,16 +148,22 @@ if __name__ == '__main__':
 
     logger = helper.init_logging(log_dir=LOG_DIR, log_level=logging.DEBUG)
 
-    logger.info(f"\n********************")
-    logger.info(f'SmartCopy starts at {dt.now()}')
-    logger.info(f"********************")
-    logger.info(f'SOURCE_ROOT: {SOURCE_ROOT}')
-    logger.info(f'TARGET_ROOT: {TARGET_ROOT}')
+    msg = f"""********************
+SmartCopy starts at {dt.now()}
+SOURCE_ROOT: {SOURCE_ROOT}
+TARGET_ROOT: {TARGET_ROOT}
+********************
+"""
+    logger.info(f"\n{msg}")
+    _send_out_message(msg)
 
     asyncio.run(main=main_async())
     # main_sync()
 
     stop_time = time.perf_counter()
     elapsed_time = stop_time - start_time
-    logger.info(f'SmartCopy ends at {dt.now()}')
-    logger.info(f"Elapsed time: {elapsed_time} seconds")
+    msg = f"""SmartCopy ends at {dt.now()}
+Elapsed time: {elapsed_time} seconds
+"""
+    logger.info(msg)
+    _send_out_message(msg)
