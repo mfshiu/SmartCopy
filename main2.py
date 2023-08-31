@@ -125,7 +125,7 @@ def _send_out_message(msg):
         msg = urllib.parse.quote(msg)
         msg = msg.replace('/', '\\')
         url = f"https://gigoo.co/mqtt/{topic}/{msg}"
-        print(f"url: {url}")
+        # print(f"url: {url}")
         response = requests.get(url)
         if response.status_code != 200:
             logger.error(f"Request failed with status code {response.status_code}")
