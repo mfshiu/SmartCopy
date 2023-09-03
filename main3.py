@@ -14,7 +14,7 @@ import schedule
 
 import urllib
 
-from config import LOG_DIR, SOURCE_ROOT, TARGET_ROOT
+from config import START_TIME, LOG_DIR, SOURCE_ROOT, TARGET_ROOT
 import helper 
 
 
@@ -139,15 +139,18 @@ if __name__ == '__main__':
     arguments = sys.argv[1:]
     start_time = time.perf_counter()
 
-    if len(arguments) >= 2:
-        SOURCE_ROOT = arguments[0]
-        TARGET_ROOT = arguments[1]
     if len(arguments) >= 3:
-        LOG_DIR = arguments[2]
+        START_TIME = arguments[0]
+        SOURCE_ROOT = arguments[1]
+        TARGET_ROOT = arguments[2]
+    else:
+        print(f"main3.py START_TIME SOURCE_ROOT TARGET_ROOT (LOG_DIR)")
+    if len(arguments) >= 4:
+        LOG_DIR = arguments[3]
 
     logger = helper.init_logging(log_dir=LOG_DIR, log_level=logging.DEBUG)
 
-    schedule.every().day.at("12:17").do(run_smartcopy)
+    schedule.every().day.at(START_TIME).do(run_smartcopy)
     while True:
         print(".", end="", flush=True)
         schedule.run_pending()
