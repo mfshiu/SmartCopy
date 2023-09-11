@@ -113,7 +113,7 @@ def _send_out_message(msg):
 
 
 def run_smartcopy():
-    msg = f"""\n********************
+    msg = f"""\n\n********************
 SmartCopy starts at {dt.now()}
 SOURCE_ROOT: {SOURCE_ROOT}
 TARGET_ROOT: {TARGET_ROOT}
@@ -152,6 +152,6 @@ if __name__ == '__main__':
 
     schedule.every().day.at(START_TIME).do(run_smartcopy)
     while True:
-        print(".", end="", flush=True)
+        print(f"\r{dt.now()}", end="", flush=True)
         schedule.run_pending()
         time.sleep(5)
